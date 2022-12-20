@@ -43,6 +43,8 @@ FROM nginx:mainline-alpine-slim
 
 ARG version
 # copy all the modules
+RUN apk add --update --no-cache brotli-libs
+
 COPY --from=builder /root/nginx-${version}/objs/ngx_http_auth_pam_module.so /usr/lib/nginx/modules/
 COPY --from=builder /root/nginx-${version}/objs/ngx_http_brotli_filter_module.so /usr/lib/nginx/modules/
 COPY --from=builder /root/nginx-${version}/objs/ngx_http_brotli_static_module.so /usr/lib/nginx/modules/
