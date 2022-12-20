@@ -1,4 +1,4 @@
-# Docker-nginx-mailine 📦
+# Docker-nginx-mainline 📦
 A custom docker image with added modules to run Nginx server.
 
 # Featury bits & pieces 🪡
@@ -18,7 +18,7 @@ version: "3"
 
 services:
   doh-server:
-    image: snowy68/nginx-mailine:latest
+    image: snowy68/nginx-mainline:latest
     container_name: nginx
     restart: unless-stopped
     ports:
