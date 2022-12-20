@@ -1,0 +1,49 @@
+ARG version=1.23.3
+
+FROM nginx:mainline-alpine-slim AS builder
+
+ARG version
+ARG pam=1.5.3
+ARG fancyindex=0.5.2
+
+WORKDIR /root/
+
+# base nginx
+RUN apk add --update --no-cache build-base pcre2-dev zlib-dev linux-pam-dev brotli-dev \
+    && wget http://nginx.org/download/nginx-${version}.tar.gz \
+    && tar zxf nginx-${version}.tar.gz \
+
+    # auth-pam module
+    && wget https://github.com/sto/ngx_http_auth_pam_module/archive/refs/tags/v${pam}.tar.gz -O ngx_auth.tar.gz \
+    && tar xf ngx_auth.tar.gz \
+    && cd ngx_http_auth_pam_module-${pam} \
+    && cd ../nginx-${version} \
+    && ./configure --with-compat --add-dynamic-module=../ngx_http_auth_pam_module-${pam} \
+    && make modules \
+
+    # brotli module
+    && cd /root/ \
+    && wget https://github.com/google/ngx_brotli/archive/refs/tags/v1.0.0rc.tar.gz -O ngx_brotli.tar.gz \
+    && tar xf ngx_brotli.tar.gz \
+    && cd ngx_brotli-1.0.0rc \
+    && cd ../nginx-${version} \
+    && ./configure --with-compat --add-dynamic-module=../ngx_brotli-1.0.0rc \
+    && make modules \
+
+    # fancyindex module
+    && cd /root/ \
+    && wget https://github.com/aperezdc/ngx-fancyindex/archive/refs/tags/v${fancyindex}.tar.gz -O ngx_fancyindex.tar.gz \
+    && tar xf ngx_fancyindex.tar.gz \
+    && cd ngx-fancyindex-${fancyindex} \
+    && cd ../nginx-${version} \
+    && ./configure --with-compat --add-dynamic-module=../ngx-fancyindex-${fancyindex} \
+    && make modules
+
+FROM nginx:mainline-alpine-slim
+
+ARG version
+# copy all the modules
+COPY --from=builder /root/nginx-${version}/objs/ngx_http_auth_pam_module.so /usr/lib/nginx/modules/
+COPY --from=builder /root/nginx-${version}/objs/ngx_http_brotli_filter_module.so /usr/lib/nginx/modules/
+COPY --from=builder /root/nginx-${version}/objs/ngx_http_brotli_static_module.so /usr/lib/nginx/modules/
+COPY --from=builder /root/nginx-${version}/objs/ngx_http_fancyindex_module.so /usr/lib/nginx/modules/
