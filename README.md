@@ -14,8 +14,6 @@ Added modules such as:
 # Docker Compose configuration:
 >This is an example config
 ```
-version: "3"
-
 services:
   doh-server:
     image: snowy68/nginx-mainline:latest
@@ -24,8 +22,8 @@ services:
     ports:
       - "80:80/tcp"
     volumes:
-      - './nginx:/etc/nginx'
-      - '/etc/passwd:/etc/passwd:ro'
+      - ./nginx:/etc/nginx
+      - /etc/passwd:/etc/passwd:ro
 ```
 # TODO
 - [ ] Support for arm64
