@@ -14,6 +14,8 @@ Added modules such as:
 # Docker Compose configuration:
 >This is an example config
 ```
+version: "3"
+
 services:
   doh-server:
     image: snowy68/nginx-mainline:latest
