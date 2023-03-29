@@ -1,4 +1,4 @@
-ARG version=1.23.3
+ARG version=1.23.4
 
 FROM nginx:mainline-alpine-slim AS builder
 
@@ -11,8 +11,7 @@ WORKDIR /root/
 RUN apk add --update --no-cache build-base pcre2-dev zlib-dev linux-pam-dev brotli-dev \
     && wget http://nginx.org/download/nginx-${version}.tar.gz \
     && tar zxf nginx-${version}.tar.gz \
-
-    # brotli module
+# brotli module
     && cd /root/ \
     && wget https://github.com/google/ngx_brotli/archive/refs/tags/v1.0.0rc.tar.gz -O ngx_brotli.tar.gz \
     && tar xf ngx_brotli.tar.gz \
@@ -20,8 +19,7 @@ RUN apk add --update --no-cache build-base pcre2-dev zlib-dev linux-pam-dev brot
     && cd ../nginx-${version} \
     && ./configure --with-compat --add-dynamic-module=../ngx_brotli-1.0.0rc \
     && make modules \
-
-    # fancyindex module
+# fancyindex module
     && cd /root/ \
     && wget https://github.com/aperezdc/ngx-fancyindex/archive/refs/tags/v${fancyindex}.tar.gz -O ngx_fancyindex.tar.gz \
     && tar xf ngx_fancyindex.tar.gz \
