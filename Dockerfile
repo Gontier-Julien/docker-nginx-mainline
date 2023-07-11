@@ -1,4 +1,4 @@
-ARG version=1.25.0
+ARG version=1.25.1
 
 FROM nginx:mainline-alpine-slim AS builder
 
